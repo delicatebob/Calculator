@@ -1,28 +1,30 @@
 object Form1: TForm1
-  Left = 413
-  Height = 417
-  Top = 71
-  Width = 331
+  Left = 465
+  Height = 466
+  Top = 60
+  Width = 328
   BorderStyle = bsDialog
   Caption = 'Калькулятор'
-  ClientHeight = 417
-  ClientWidth = 331
+  ClientHeight = 466
+  ClientWidth = 328
   Color = clWhite
+  OnCreate = FormCreate
   LCLVersion = '1.6.4.0'
   object Edit1: TEdit
     Cursor = crArrow
-    Left = -1
-    Height = 72
+    Left = -8
+    Height = 70
     Top = 24
-    Width = 333
+    Width = 336
     AutoSelect = False
+    BorderStyle = bsNone
     Color = clWhite
     Font.CharSet = ANSI_CHARSET
-    Font.Height = -48
-    Font.Name = 'Arial Unicode MS'
+    Font.Height = -52
+    Font.Name = 'Segoe UI Light'
     Font.Pitch = fpVariable
     Font.Quality = fqDraft
-    MaxLength = 12
+    MaxLength = 15
     ParentBidiMode = False
     OnClick = Edit1Click1
     OnEnter = Edit1Click1
@@ -40,8 +42,8 @@ object Form1: TForm1
   object But2: TButton
     Left = 64
     Height = 65
-    Top = 288
-    Width = 66
+    Top = 336
+    Width = 65
     Caption = '2'
     Font.CharSet = RUSSIAN_CHARSET
     Font.Height = -24
@@ -55,8 +57,8 @@ object Form1: TForm1
   object But4: TButton
     Left = 0
     Height = 65
-    Top = 224
-    Width = 66
+    Top = 272
+    Width = 65
     Caption = '4'
     Font.CharSet = RUSSIAN_CHARSET
     Font.Height = -24
@@ -70,8 +72,8 @@ object Form1: TForm1
   object But5: TButton
     Left = 64
     Height = 65
-    Top = 224
-    Width = 66
+    Top = 272
+    Width = 65
     Caption = '5'
     Font.CharSet = RUSSIAN_CHARSET
     Font.Height = -24
@@ -85,8 +87,8 @@ object Form1: TForm1
   object But6: TButton
     Left = 128
     Height = 65
-    Top = 224
-    Width = 66
+    Top = 272
+    Width = 65
     Caption = '6'
     Font.CharSet = RUSSIAN_CHARSET
     Font.Height = -24
@@ -100,8 +102,8 @@ object Form1: TForm1
   object But3: TButton
     Left = 128
     Height = 65
-    Top = 288
-    Width = 66
+    Top = 336
+    Width = 65
     Caption = '3'
     Font.CharSet = RUSSIAN_CHARSET
     Font.Height = -24
@@ -115,8 +117,8 @@ object Form1: TForm1
   object But7: TButton
     Left = 0
     Height = 65
-    Top = 160
-    Width = 66
+    Top = 208
+    Width = 65
     Caption = '7'
     Font.CharSet = RUSSIAN_CHARSET
     Font.Height = -24
@@ -130,8 +132,8 @@ object Form1: TForm1
   object But8: TButton
     Left = 64
     Height = 65
-    Top = 160
-    Width = 66
+    Top = 208
+    Width = 65
     Caption = '8'
     Font.CharSet = RUSSIAN_CHARSET
     Font.Height = -24
@@ -145,8 +147,8 @@ object Form1: TForm1
   object But9: TButton
     Left = 128
     Height = 65
-    Top = 160
-    Width = 66
+    Top = 208
+    Width = 65
     Caption = '9'
     Font.CharSet = RUSSIAN_CHARSET
     Font.Height = -24
@@ -159,9 +161,9 @@ object Form1: TForm1
   end
   object Plus: TButton
     Left = 192
-    Height = 129
-    Top = 288
-    Width = 71
+    Height = 65
+    Top = 400
+    Width = 70
     Caption = '+'
     Font.CharSet = RUSSIAN_CHARSET
     Font.Height = -24
@@ -175,8 +177,8 @@ object Form1: TForm1
   object Comma: TButton
     Left = 128
     Height = 65
-    Top = 352
-    Width = 67
+    Top = 400
+    Width = 65
     Caption = ','
     Color = clBlack
     Font.CharSet = RUSSIAN_CHARSET
@@ -191,8 +193,8 @@ object Form1: TForm1
   object ChangeOfSign: TButton
     Left = 261
     Height = 65
-    Top = 96
-    Width = 71
+    Top = 144
+    Width = 67
     Caption = '±'
     Font.CharSet = RUSSIAN_CHARSET
     Font.Height = -24
@@ -206,8 +208,8 @@ object Form1: TForm1
   object EqualSign: TButton
     Left = 261
     Height = 65
-    Top = 352
-    Width = 71
+    Top = 400
+    Width = 67
     Caption = '='
     Font.CharSet = RUSSIAN_CHARSET
     Font.Height = -24
@@ -221,8 +223,8 @@ object Form1: TForm1
   object MultiplicationSign: TButton
     Left = 192
     Height = 65
-    Top = 224
-    Width = 71
+    Top = 272
+    Width = 70
     Caption = '×'
     Font.CharSet = RUSSIAN_CHARSET
     Font.Height = -24
@@ -234,10 +236,10 @@ object Form1: TForm1
     TabOrder = 13
   end
   object MinusSign: TButton
-    Left = 261
+    Left = 192
     Height = 65
-    Top = 288
-    Width = 71
+    Top = 336
+    Width = 70
     Caption = '−'
     Font.CharSet = RUSSIAN_CHARSET
     Font.Height = -24
@@ -249,10 +251,10 @@ object Form1: TForm1
     TabOrder = 14
   end
   object DivisionSign: TButton
-    Left = 261
+    Left = 192
     Height = 65
-    Top = 224
-    Width = 71
+    Top = 208
+    Width = 70
     Caption = '÷'
     Font.CharSet = RUSSIAN_CHARSET
     Font.Height = -24
@@ -266,8 +268,8 @@ object Form1: TForm1
   object Square: TButton
     Left = 261
     Height = 65
-    Top = 160
-    Width = 71
+    Top = 208
+    Width = 67
     Caption = 'x^2'
     Font.CharSet = RUSSIAN_CHARSET
     Font.Height = -24
@@ -279,10 +281,10 @@ object Form1: TForm1
     TabOrder = 16
   end
   object SquareRoot: TButton
-    Left = 192
+    Left = 261
     Height = 65
-    Top = 160
-    Width = 71
+    Top = 272
+    Width = 67
     Caption = '√'
     Font.CharSet = RUSSIAN_CHARSET
     Font.Height = -24
@@ -294,10 +296,10 @@ object Form1: TForm1
     TabOrder = 17
   end
   object CE: TButton
-    Left = 128
+    Left = 64
     Height = 65
-    Top = 96
-    Width = 67
+    Top = 144
+    Width = 65
     Caption = 'CE'
     Font.CharSet = RUSSIAN_CHARSET
     Font.Height = -24
@@ -311,8 +313,8 @@ object Form1: TForm1
   object C: TButton
     Left = 0
     Height = 65
-    Top = 96
-    Width = 130
+    Top = 144
+    Width = 65
     Caption = 'С'
     Color = clWindow
     Font.CharSet = RUSSIAN_CHARSET
@@ -328,8 +330,8 @@ object Form1: TForm1
   object ChangeOfSignOfTheDegree: TButton
     Left = 192
     Height = 65
-    Top = 96
-    Width = 71
+    Top = 144
+    Width = 70
     Caption = '1\x'
     Font.CharSet = RUSSIAN_CHARSET
     Font.Height = -24
@@ -342,7 +344,7 @@ object Form1: TForm1
   end
   object GG: TEdit
     Cursor = crArrow
-    Left = 0
+    Left = -5
     Height = 25
     Top = 0
     Width = 333
@@ -360,8 +362,8 @@ object Form1: TForm1
   object But0: TButton
     Left = 0
     Height = 65
-    Top = 352
-    Width = 130
+    Top = 400
+    Width = 129
     Caption = '0'
     Color = clBlack
     Font.CharSet = RUSSIAN_CHARSET
@@ -376,8 +378,8 @@ object Form1: TForm1
   object But1: TButton
     Left = 0
     Height = 65
-    Top = 288
-    Width = 66
+    Top = 336
+    Width = 65
     Caption = '1'
     Color = clBlack
     Font.CharSet = RUSSIAN_CHARSET
@@ -388,5 +390,105 @@ object Form1: TForm1
     OnClick = WOW
     ParentFont = False
     TabOrder = 23
+  end
+  object MC: TButton
+    Left = 0
+    Height = 45
+    Hint = 'Отчистка всей памяти'
+    Top = 96
+    Width = 53
+    Caption = 'MC'
+    Enabled = False
+    ParentShowHint = False
+    ShowHint = True
+    TabOrder = 24
+  end
+  object MR: TButton
+    Left = 52
+    Height = 45
+    Hint = 'Вызов из памяти'
+    Top = 96
+    Width = 53
+    Caption = 'MR'
+    Enabled = False
+    ParentShowHint = False
+    ShowHint = True
+    TabOrder = 25
+  end
+  object MPLUS: TButton
+    Left = 104
+    Height = 45
+    Hint = 'Добавление памяти'
+    Top = 96
+    Width = 53
+    Caption = 'M+'
+    ParentShowHint = False
+    ShowHint = True
+    TabOrder = 26
+  end
+  object MS: TButton
+    Left = 208
+    Height = 45
+    Hint = 'Сохранение в памяти'
+    Top = 96
+    Width = 53
+    Caption = 'MS'
+    ParentShowHint = False
+    ShowHint = True
+    TabOrder = 27
+  end
+  object M: TButton
+    Left = 261
+    Height = 45
+    Hint = 'Память'
+    Top = 96
+    Width = 67
+    Caption = 'M'
+    Enabled = False
+    ParentShowHint = False
+    ShowHint = True
+    TabOrder = 28
+  end
+  object dellastsign: TButton
+    Left = 128
+    Height = 65
+    Top = 144
+    Width = 65
+    Caption = '↩'
+    Color = clWindow
+    Font.CharSet = RUSSIAN_CHARSET
+    Font.Height = -27
+    Font.Name = 'Arial'
+    Font.Pitch = fpVariable
+    Font.Quality = fqDraft
+    OnClick = dellastsignClick
+    ParentFont = False
+    TabOrder = 29
+  end
+  object Percent: TButton
+    Left = 261
+    Height = 65
+    Top = 336
+    Width = 67
+    Caption = '%'
+    Font.CharSet = RUSSIAN_CHARSET
+    Font.Height = -24
+    Font.Name = 'Arial'
+    Font.Pitch = fpVariable
+    Font.Quality = fqDraft
+    OnClick = PercentClick
+    ParentFont = False
+    TabOrder = 30
+  end
+  object MMINUS: TButton
+    Left = 156
+    Height = 45
+    Hint = 'Вычитание памяти'
+    Top = 96
+    Width = 53
+    Caption = 'M-'
+    ParentShowHint = False
+    ShowHint = True
+    TabOrder = 31
   end
 end
