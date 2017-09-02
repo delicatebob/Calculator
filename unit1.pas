@@ -83,7 +83,8 @@ var
   ,f3 {Чтобы число удалялось после выполнения действий, если с ним больше ничего не делают}
   ,f4,f5{Для смены знака во 2-м edit'e,если число не менялось}
   ,f6{Для вывода 0 во 2-й edit}
-  ,f7{Деление на 0}:boolean; //Флажки
+  ,f7{Деление на 0}
+  ,f8{Для повторения последнего действия}:boolean; //Флажки
 implementation
 
 {$R *.lfm}
@@ -190,7 +191,7 @@ begin
 
 procedure Tform1.Edit1KeyPress(Sender: TObject; var Key: char);
 begin
- if  (key in ['0'..'9','*','/','-','+',',','=',#8,#13]) then begin // Блокировка всех символов, невходящих в состав необходимых
+ if  (key in ['0'..'9','*','/','-','+',',','=',#8,#13,'%']) then begin // Блокировка всех символов, невходящих в состав необходимых
  case key of
   '0':begin but0.enabled:=false; sleep(50); but0.enabled:=true;   but0.click; key:=#0; end;
   '1':begin but1.enabled:=false; sleep(50); but1.enabled:=true; but1.click; key:=#0; end;
@@ -209,6 +210,7 @@ begin
   ',':begin comma.enabled:=false; sleep(50); comma.enabled:=true;  comma.click; key:=#0; end;
   '=',#13:begin EqualSign.enabled:=false; sleep(50); EqualSign.enabled:=true;  EqualSign.click; key:=#0; end;
   #8:begin dellastsign.Enabled:=false; sleep(50); dellastsign.enabled:=true; dellastsign.click; key:=#0;  end;
+  '%':begin percent.enabled:=false; sleep(50); percent.enabled:=true; percent.click; key:=#0; end;
  end;
  end
   else
@@ -232,6 +234,10 @@ begin    //  Блокировка кнопок
   Form1.Ce.enabled:=false;
   form1.percent.enabled:=false;
   f:=true;
+  f8:=false;
+  chisla[255]:=0;
+  chisla[254]:=0;
+  znaki[255]:=#0;
 end;
 
 procedure Unlock;
@@ -310,6 +316,10 @@ unlock;
    edit1.SetFocus;
    gg.clear;
    InputRestriction;
+   f8:=false;
+   chisla[255]:=0;
+   chisla[254]:=0;
+   znaki[255]:=#0;
 end;
 
 procedure TForm1.SquareClick(Sender: TObject); //Возведение в квадрат
@@ -447,6 +457,10 @@ procedure TForm1.signs(Sender: TObject); // Действия
      gg.text:=gg.text+'0';
      changesign;
      end;
+   f8:=false;
+   chisla[255]:=0;
+   chisla[254]:=0;
+   znaki[255]:=#0;
   Myp;
   if (znaki[i-1] = '/') and (edit1.text = '0') and (i>=2) then
   lock;
@@ -473,6 +487,8 @@ if edit1.text='' then
     if edit1.text<>'' then begin
        chisla[i+1]:=strtofloat(edit1.text);
     g:=i+1;
+    chisla[255]:=strtofloat(edit1.text);
+    znaki[255]:=znaki[i];
     end;
     for j:=1 to g do begin
         if znaki[j]='*' then begin
@@ -484,13 +500,15 @@ if edit1.text='' then
            chisla[j]:=0;
         end;
     end;
-    for j:=1 to g do
+    for j:=1 to g-1 do
         if znaki[j]='-' then
            chisla[j+1]*=-1;
     for j:=1 to g do begin
         otvet:=otvet+chisla[j];
         chisla[j]:=0;
+        znaki[j]:=#0;
     end;
+    f8:=true;
     form1.edit1.maxlength:=20;
            edit1.text:=floattostr(otvet);
     InputRestriction;
@@ -502,11 +520,17 @@ if edit1.text='' then
     f3:=true;
  end
  else
- if chisla[1]<>0 then
- edit1.text:=floattostr(chisla[1])
- else
-    edit1.text:='0';
+     if (f8=true)  then begin
+        case znaki[255] of
+          '+':edit1.text:=floattostr(strtofloat(edit1.text)+chisla[255]);
+          '-':edit1.text:=floattostr(strtofloat(edit1.text)-chisla[255]);
+          '*':edit1.text:=floattostr(strtofloat(edit1.text)*chisla[255]);
+          '/':edit1.text:=floattostr(strtofloat(edit1.text)/chisla[255]);
+        end;
+     end;
  end;
+f4:=true;
+f5:=false;
 f7:=false;
 end;
 
@@ -517,21 +541,26 @@ end;
 
 procedure TForm1.PercentClick(Sender: TObject);  //Процент
 var
-temp: double;
-l,l1,l2:string;
+temp: real;
 begin
-  if (znaki[i] <> '') THEN
+  if (znaki[i] <>#0) THEN
   begin
-    if (Edit1.Text = '') THEN Edit1.Text := FloatToStr(chisla[i]);
+    if (Edit1.Text = '') THEN
+       Edit1.Text := FloatToStr(chisla[i]);
     temp := chisla[i]/100*StrToFloat(Edit1.Text);
     Edit1.Text := FloatToStr(temp);
   end
   else begin
-  temp:=strtofloat(edit1.text);
-  temp:=temp/100;
-  edit1.text:=floattostr(temp);
+       temp:=strtofloat(edit1.text);
+       temp:=temp/100;
+       edit1.text:=floattostr(temp);
   end;
-edit1.setfocus;
+  if frac(temp) = 0 then  // Проверка запятой
+     z:=false;
+  f2:=false;
+  f3:=true;
+  edit1.SetFocus; // Фокус на edit1
+  InputRestriction;  // Настройка Edit1'a
 end;
 end.
 
