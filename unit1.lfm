@@ -1,12 +1,12 @@
 object Form1: TForm1
-  Left = 599
+  Left = 463
   Height = 466
-  Top = 90
-  Width = 328
+  Top = 22
+  Width = 330
   BorderStyle = bsDialog
   Caption = 'Калькулятор'
   ClientHeight = 466
-  ClientWidth = 328
+  ClientWidth = 330
   Color = clWhite
   OnCreate = FormCreate
   LCLVersion = '1.6.4.0'
@@ -15,7 +15,7 @@ object Form1: TForm1
     Left = -8
     Height = 70
     Top = 24
-    Width = 336
+    Width = 337
     AutoSelect = False
     BorderStyle = bsNone
     Color = clWhite
@@ -36,6 +36,7 @@ object Form1: TForm1
     OnMouseLeave = Edit1Click1
     OnResize = Edit1Click1
     ParentFont = False
+    ReadOnly = True
     TabOrder = 0
     Text = '0'
   end
@@ -355,6 +356,7 @@ object Form1: TForm1
     Font.Name = 'Arial Narrow'
     Font.Pitch = fpVariable
     Font.Quality = fqDraft
+    OnClick = GGClick
     ParentFont = False
     ReadOnly = True
     TabOrder = 21
@@ -396,58 +398,50 @@ object Form1: TForm1
     Height = 45
     Hint = 'Отчистка всей памяти'
     Top = 96
-    Width = 53
+    Width = 65
     Caption = 'MC'
     Enabled = False
+    OnClick = MClick
     ParentShowHint = False
     ShowHint = True
     TabOrder = 24
   end
   object MR: TButton
-    Left = 52
+    Left = 64
     Height = 45
     Hint = 'Вызов из памяти'
     Top = 96
-    Width = 53
+    Width = 65
     Caption = 'MR'
     Enabled = False
+    OnClick = MClick
     ParentShowHint = False
     ShowHint = True
     TabOrder = 25
   end
   object MPLUS: TButton
-    Left = 104
+    Left = 128
     Height = 45
     Hint = 'Добавление памяти'
     Top = 96
-    Width = 53
+    Width = 65
     Caption = 'M+'
+    OnClick = MClick
     ParentShowHint = False
     ShowHint = True
     TabOrder = 26
   end
   object MS: TButton
-    Left = 208
+    Left = 261
     Height = 45
     Hint = 'Сохранение в памяти'
     Top = 96
-    Width = 53
+    Width = 67
     Caption = 'MS'
+    OnClick = MClick
     ParentShowHint = False
     ShowHint = True
     TabOrder = 27
-  end
-  object M: TButton
-    Left = 261
-    Height = 45
-    Hint = 'Память'
-    Top = 96
-    Width = 67
-    Caption = 'M'
-    Enabled = False
-    ParentShowHint = False
-    ShowHint = True
-    TabOrder = 28
   end
   object dellastsign: TButton
     Left = 128
@@ -463,7 +457,7 @@ object Form1: TForm1
     Font.Quality = fqDraft
     OnClick = dellastsignClick
     ParentFont = False
-    TabOrder = 29
+    TabOrder = 28
   end
   object Percent: TButton
     Left = 261
@@ -478,17 +472,18 @@ object Form1: TForm1
     Font.Quality = fqDraft
     OnClick = PercentClick
     ParentFont = False
-    TabOrder = 30
+    TabOrder = 29
   end
   object MMINUS: TButton
-    Left = 156
+    Left = 192
     Height = 45
     Hint = 'Вычитание памяти'
     Top = 96
-    Width = 53
+    Width = 70
     Caption = 'M-'
+    OnClick = MClick
     ParentShowHint = False
     ShowHint = True
-    TabOrder = 31
+    TabOrder = 30
   end
 end

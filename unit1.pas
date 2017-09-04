@@ -6,7 +6,7 @@ interface
 
 uses
 Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs,
-StdCtrls, LCLType, ExtCtrls, Buttons, Windows;
+StdCtrls, LCLType, ExtCtrls, Buttons, ComCtrls, DbCtrls, Windows;
 
 type
 
@@ -23,7 +23,6 @@ type
     MR: TButton;
     MPLUS: TButton;
     MS: TButton;
-    M: TButton;
     dellastsign: TButton;
     GG: TEdit;
     Percent: TButton;
@@ -56,8 +55,10 @@ type
     procedure CommaClick(Sender: TObject); // Запятая
     procedure Edit1KeyPress(Sender: TObject; var Key: char); // Запрет всех символов, кроме цифр
     procedure EqualSignClick(Sender: TObject); // Знак равно
-    procedure FormCreate(Sender: TObject);
-    procedure PercentClick(Sender: TObject);
+    procedure FormCreate(Sender: TObject); //Настройка переменных сразу при запуске программы
+    procedure GGClick(Sender: TObject);
+    procedure MClick(Sender: TObject); // Память
+    procedure PercentClick(Sender: TObject); // Процент
     procedure Signs(Sender: TObject); // Основные знаки (+,-,/,*)
     procedure CClick(Sender: TObject); // Отчистка полная
     procedure SquareClick(Sender: TObject); // Квадрат числа
@@ -71,10 +72,14 @@ type
 
 var
   Form1: TForm1;
-  edit0:array[1..2] of real; // Для смены знака у степени числа
-  chisla:array[1..255] of real; // Массив со всеми числами
+  //Память
+  buffer1:string;
+  buffer:double;
+  //end
+  edit0:array[1..2] of double; // Для смены знака у степени числа
+  chisla:array[1..255] of double; // Массив со всеми числами
   znaki:array[1..255] of char; // Массив со всеми знаками
-  i:integer; // Кол-во чисел и знаков
+  i,i1:integer; // Кол-во чисел и знаков
   t:real; // Для смены знака у степени числа
   z{Для запятой}
   ,f {Для блокировки кнопок}
@@ -103,6 +108,7 @@ begin
   HideCaret(Edit1.Handle);
   edit1.SelLength:=0;
 end;
+//end
 
 procedure TForm1.dellastsignClick(Sender: TObject);   //Удаление последнего символа
 var
@@ -119,10 +125,8 @@ begin
           edit1.text:=e;
      end;
   end;
-  edit1.setfocus
+  edit1.setfocus;
 end;
-
-// End
 
 procedure InputRestriction; // Ограничение ввода в edit1
 var p1:integer;
@@ -222,7 +226,6 @@ procedure Lock;
 begin    //  Блокировка кнопок
   form1.gg.clear;
   Form1.edit1.text:='Ошибка!';
-  InputRestriction;
   Form1.ChangeOfSignOfTheDegree.enabled:=false;
   Form1.ChangeOfSign.enabled:=false;
   Form1.MinusSign.enabled:=false;
@@ -233,6 +236,12 @@ begin    //  Блокировка кнопок
   Form1.Plus.enabled:=false;
   Form1.Ce.enabled:=false;
   form1.percent.enabled:=false;
+  form1.dellastsign.enabled:=false;
+  form1.MR.enabled:=false;
+  form1.MPLUS.enabled:=false;
+  form1.MMINUS.enabled:=false;
+  form1.MS.enabled:=false;
+  form1.MC.enabled:=false;
   f:=true;
   f8:=false;
   chisla[255]:=0;
@@ -255,6 +264,12 @@ if f=True then begin    //  Отключение блокировки кнопо
   Form1.Plus.enabled:=True;
   Form1.Ce.enabled:=True;
   Form1.percent.enabled:=True;
+  form1.dellastsign.enabled:=true;
+  form1.MR.enabled:=true;
+  form1.MPLUS.enabled:=true;
+  form1.MMINUS.enabled:=true;
+  form1.MS.enabled:=true;
+  form1.MC.enabled:=true;
   f:=false;
   Form1.edit1.text:='0';
   for j:=1 to i+1 do begin
@@ -281,7 +296,7 @@ if f3=true then
 end;
 
 procedure TForm1.WOW(Sender: TObject); //Цифры
-  begin
+begin
     Unlock;
     edit;
     edit2;
@@ -323,7 +338,7 @@ unlock;
 end;
 
 procedure TForm1.SquareClick(Sender: TObject); //Возведение в квадрат
-var e:real;
+var e:double;
 begin
   e:=StrToFloat(edit1.text);
   e:=e*e;
@@ -336,7 +351,7 @@ begin
 end;
 
 procedure TForm1.SquareRootClick(Sender: TObject); // Корень квадратный
-var e:real;
+var e:double;
 begin
   e:=StrToFloat(edit1.text);
   if (e>=0) then begin
@@ -366,7 +381,7 @@ procedure TForm1.CeClick(Sender: TObject); // Отчистка неполная
 
 procedure TForm1.ChangeOfSignClick(Sender: TObject); // Смена знака числа
   var
-    e:real;
+    e:double;
   begin
   e:=StrToFloat(edit1.text);
   e*=-1;
@@ -380,7 +395,7 @@ end;
 
 procedure TForm1.ChangeOfSignOfTheDegreeClick(Sender: TObject);  //Смена знака степени у числа
 var
-e:real;
+e:double;
 begin
  if f2=false then
     edit0[1]:=strtofloat(edit1.text);
@@ -396,11 +411,7 @@ begin
     edit0[2]:=edit0[1]-edit0[2];
     edit0[1]:=edit0[1]-edit0[2];
     end;
- end
- else begin
-    lock;
-    f2:=false;
-   end;
+ end;
 f2:=true;
 e:=strtofloat(edit1.text);
 if frac(e) = 0 then  // Проверка запятой
@@ -408,6 +419,10 @@ if frac(e) = 0 then  // Проверка запятой
 f3:=true;
 edit1.SetFocus; // Фокус на edit1
 InputRestriction;  // Настройка Edit1'a
+ if edit1.text='0' then begin
+    lock;
+    f2:=false;
+   end;
 end;
 
 
@@ -470,7 +485,7 @@ end;
  var
  g,j{Чтобы проверять массив}
  :integer;
- otvet:real; //Ответ
+ otvet:double; //Ответ
 begin
 otvet:=0;
 edit1.SetFocus;
@@ -511,7 +526,6 @@ if edit1.text='' then
     f8:=true;
     form1.edit1.maxlength:=20;
            edit1.text:=floattostr(otvet);
-    InputRestriction;
     g:=0;
     i:=0;
     z:=false;
@@ -532,6 +546,7 @@ if edit1.text='' then
 f4:=true;
 f5:=false;
 f7:=false;
+InputRestriction;
 end;
 
 procedure TForm1.FormCreate(Sender: TObject);
@@ -539,9 +554,35 @@ procedure TForm1.FormCreate(Sender: TObject);
   f4:=true;
 end;
 
+procedure TForm1.GGClick(Sender: TObject); // Фокус на edit1
+begin
+  edit1.setfocus;
+end;
+
+procedure TForm1.MClick(Sender: TObject); //Память
+begin
+ case (sender as Tbutton).caption of
+      'M+':begin buffer:=buffer+strtofloat(edit1.text); buffer1:=floattostr(buffer); end;
+      'M-':begin buffer:=buffer-strtofloat(edit1.text); buffer1:=floattostr(buffer); end;
+      'MS':begin buffer:=strtofloat(edit1.text); buffer1:=floattostr(buffer); end;
+      'MC':begin buffer:=0; buffer1:=''; end;
+      'MR':edit1.text:=buffer1;
+ end;
+ if (buffer1<>'') then begin
+    MR.enabled:=true;
+    MC.enabled:=true;
+ end
+ else begin
+    MR.enabled:=false;
+    MC.enabled:=false;
+ end;
+ edit1.setfocus;
+ f3:=true;
+end;
+
 procedure TForm1.PercentClick(Sender: TObject);  //Процент
 var
-temp: real;
+temp: double;
 begin
   if (znaki[i] <>#0) THEN
   begin
