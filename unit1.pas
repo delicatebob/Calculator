@@ -279,6 +279,10 @@ if f=True then begin    //  Отключение блокировки кнопо
   i:=0;
   z:=false;
 end;
+ if buffer1='' then begin
+ Form1.MC.enabled:=false;
+ Form1.MR.enabled:=false;
+ end;
 end;
 
 procedure edit; // Чтобы число оставалось на экране до момента набора следующего
