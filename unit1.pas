@@ -6,7 +6,7 @@ interface
 
 uses
 Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs,
-StdCtrls, LCLType, ExtCtrls, Buttons, ComCtrls, DbCtrls, Windows;
+StdCtrls, LCLType, ExtCtrls, Buttons, ComCtrls, DbCtrls, Menus, Windows, Math;
 
 type
 
@@ -15,10 +15,28 @@ type
   TForm1 = class(TForm)
     But0: TButton;
     But1: TButton;
+    Degree1: TButton;
+    divbut: TButton;
+    logbut1: TButton;
+    Pibut: TButton;
+    Factorial: TButton;
+    Degree: TButton;
+    modbut: TButton;
+    sinbut: TButton;
+    cosbut: TButton;
+    tgbut: TButton;
+    ctgbut: TButton;
+    logbut: TButton;
     But7: TButton;
     But8: TButton;
     But9: TButton;
+    MainMenu: TMainMenu;
     MC: TButton;
+    View: TMenuItem;
+    Help: TMenuItem;
+    Normal: TMenuItem;
+    Engineering: TMenuItem;
+    Creator: TMenuItem;
     MMINUS: TButton;
     MR: TButton;
     MPLUS: TButton;
@@ -54,13 +72,18 @@ type
     procedure ChangeOfSignOfTheDegreeClick(Sender: TObject); // Смена знака у степени числа
     procedure CommaClick(Sender: TObject); // Запятая
     procedure Edit1KeyPress(Sender: TObject; var Key: char); // Запрет всех символов, кроме цифр
+    procedure EngineeringClick(Sender: TObject);  //Инженерный вид
     procedure EqualSignClick(Sender: TObject); // Знак равно
+    procedure FactorialClick(Sender: TObject); // Факториал
     procedure FormCreate(Sender: TObject); //Настройка переменных сразу при запуске программы
     procedure GGClick(Sender: TObject);
     procedure MClick(Sender: TObject); // Память
+    procedure NormalClick(Sender: TObject); // Обычный вид
     procedure PercentClick(Sender: TObject); // Процент
+    procedure PibutClick(Sender: TObject); // Число Пи
     procedure Signs(Sender: TObject); // Основные знаки (+,-,/,*)
     procedure CClick(Sender: TObject); // Отчистка полная
+    procedure sincostgctgbutClick(Sender: TObject); // Синус
     procedure SquareClick(Sender: TObject); // Квадрат числа
     procedure SquareRootClick(Sender: TObject); // Квадратный корень числа
     procedure WOW(Sender: TObject); // Цифры от 0 до 9
@@ -163,6 +186,7 @@ end;
 procedure changesign; // Смена вида знака
   begin
         case znaki[i] of
+             '^':form1.gg.text:=form1.gg.text+'^';
              '+':form1.gg.text:=form1.gg.text+'+';
              '-':form1.gg.text:=form1.gg.text+'−';
              '*':form1.gg.text:=form1.gg.text+'×';
@@ -178,6 +202,10 @@ begin
   if f4=true then begin
         e:=floattostr(chisla[i]);
         case znaki[i] of
+             'm':form1.gg.text:=form1.gg.text+e+'m';
+             'd':form1.gg.text:=form1.gg.text+e+'d';
+             'v':form1.gg.text:=form1.gg.text+e+'v';
+             '^':form1.gg.text:=form1.gg.text+e+'^';
              '+':form1.gg.text:=form1.gg.text+e+'+';
              '-':form1.gg.text:=form1.gg.text+e+'−';
              '*':form1.gg.text:=form1.gg.text+e+'×';
@@ -341,12 +369,28 @@ unlock;
    znaki[255]:=#0;
 end;
 
+procedure TForm1.sincostgctgbutClick(Sender: TObject); //Синус,Косинус,Тангенc,Котангентс
+var e:real;
+begin
+  e:=0;
+  e:=strtofloat(edit1.text);
+  edit1.MaxLength:=20;
+  case (sender as Tbutton).caption of
+  'sin':edit1.text:=floattostr(sin(e*pi/180));
+  'cos':edit1.text:=floattostr(cos(e*pi/180));
+  'tg':begin if frac(e/90)=0 then lock else edit1.text:=floattostr(sin(e*pi/180)/cos(e*pi/180)); end;
+  'ctg':begin if frac(e/180)=0 then lock else edit1.text:=floattostr(cos(e*pi/180)/sin(e*pi/180)); end;
+  end;
+  F3:=true;
+  InputRestriction;
+end;
+
 procedure TForm1.SquareClick(Sender: TObject); //Возведение в квадрат
 var e:double;
 begin
   e:=StrToFloat(edit1.text);
   e:=e*e;
-  edit1.MaxLength:=18;
+  edit1.MaxLength:=20;
   Edit1.text:=floattostr(e);
   f2:=false;
   f3:=true;
@@ -360,7 +404,7 @@ begin
   e:=StrToFloat(edit1.text);
   if (e>=0) then begin
   e:=sqrt(e);
-  edit1.maxlength:=18;
+  edit1.maxlength:=20;
   Edit1.text:=floattostr(e)
   end
   else begin
@@ -462,6 +506,10 @@ procedure TForm1.signs(Sender: TObject); // Действия
    f5:=true;
    end;
    case (sender as Tbutton).caption of
+        'mod':znaki[i]:='m';
+        'div':znaki[i]:='d';
+        'ª√x':znaki[i]:='v';
+        'xª':znaki[i]:='^';
         '+':znaki[i]:='+';
         '−':znaki[i]:='-';
         '×':znaki[i]:='*';
@@ -481,7 +529,7 @@ procedure TForm1.signs(Sender: TObject); // Действия
    chisla[254]:=0;
    znaki[255]:=#0;
   Myp;
-  if (znaki[i-1] = '/') and (edit1.text = '0') and (i>=2) then
+  if ((znaki[i-1] = '/') or (znaki[i-1] = 'm') or (znaki[i-1] = 'd')) and (edit1.text = '0') and (i>=2) then
   lock;
 end;
 
@@ -489,13 +537,13 @@ end;
  var
  g,j{Чтобы проверять массив}
  :integer;
- otvet:double; //Ответ
+ otvet,e:double; //Ответ
 begin
 otvet:=0;
 edit1.SetFocus;
 gg.clear;
 unlock;
-if (znaki[i] = '/') and (edit1.text ='0') then begin
+if ((znaki[i] = '/') or (znaki[i] = 'm') or (znaki[i] = 'd')) and (edit1.text ='0') then begin
          f7:=true;
          lock;
          end;
@@ -509,7 +557,28 @@ if edit1.text='' then
     chisla[255]:=strtofloat(edit1.text);
     znaki[255]:=znaki[i];
     end;
+    for j:=1 to g-1 do
+        if znaki[j]='-' then
+           chisla[j+1]*=-1;
     for j:=1 to g do begin
+        if znaki[j]='m' then begin
+        e:=chisla[j]/chisla[j+1];
+        chisla[j+1]:=frac(e)*chisla[j+1];
+        chisla[j]:=0;
+        end;
+        if znaki[j]='d' then begin
+        e:=chisla[j]/chisla[j+1];
+        chisla[j+1]:=e-frac(e);
+        chisla[j]:=0;
+        end;
+        if znaki[j]='v' then begin
+        chisla[j+1]:=exp(ln(chisla[j])*(1/chisla[j+1]));
+        chisla[j]:=0;
+        end;
+        if znaki[j]='^' then begin
+        chisla[j+1]:=Power(chisla[j],chisla[j+1]);
+        chisla[j]:=0;
+        end;
         if znaki[j]='*' then begin
            chisla[j+1]:=chisla[j]*chisla[j+1];
            chisla[j]:=0;
@@ -519,9 +588,6 @@ if edit1.text='' then
            chisla[j]:=0;
         end;
     end;
-    for j:=1 to g-1 do
-        if znaki[j]='-' then
-           chisla[j+1]*=-1;
     for j:=1 to g do begin
         otvet:=otvet+chisla[j];
         chisla[j]:=0;
@@ -539,6 +605,7 @@ if edit1.text='' then
  end
  else
      if (f8=true)  then begin
+     form1.edit1.maxlength:=20;
         case znaki[255] of
           '+':edit1.text:=floattostr(strtofloat(edit1.text)+chisla[255]);
           '-':edit1.text:=floattostr(strtofloat(edit1.text)-chisla[255]);
@@ -551,6 +618,26 @@ f4:=true;
 f5:=false;
 f7:=false;
 InputRestriction;
+end;
+
+procedure TForm1.FactorialClick(Sender: TObject); // Факториал
+  var
+  e3,g:integer;
+  e4:string;
+  i3:integer;
+  begin
+  if z=false then begin
+    e4:=edit1.text;
+  str(e3,e4);
+  g:=1;
+  if e3<>0 then
+  for i3:=1 to e3 do
+      g:=g*i3;
+  val(e4,g);
+  edit1.text:=e4;
+  end
+  else
+  lock;
 end;
 
 procedure TForm1.FormCreate(Sender: TObject);
@@ -584,6 +671,20 @@ begin
  f3:=true;
 end;
 
+procedure TForm1.NormalClick(Sender: TObject);   //Обычный вид калькулятора
+begin
+  form1.Width:=329;
+  Normal.enabled:=false;
+  Engineering.enabled:=True;
+end;
+
+procedure TForm1.EngineeringClick(Sender: TObject); //Инженерный вид калькулятора
+begin
+    form1.width:=460;
+    Engineering.enabled:=false;
+    Normal.enabled:=True;
+end;
+
 procedure TForm1.PercentClick(Sender: TObject);  //Процент
 var
 temp: double;
@@ -607,5 +708,16 @@ begin
   edit1.SetFocus; // Фокус на edit1
   InputRestriction;  // Настройка Edit1'a
 end;
+
+procedure TForm1.PibutClick(Sender: TObject);  //Число Пи
+var e:real;
+begin
+  e:=pi;
+  edit1.maxlength:=20;
+  edit1.text:=floattostr(e);
+  F3:=true;
+  InputRestriction;
+end;
+
 end.
 
