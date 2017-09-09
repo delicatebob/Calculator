@@ -269,6 +269,18 @@ begin    //  Блокировка кнопок
   else
       Form1.edit1.text:='Ошибка!';
   form1.edit1.font.Size:=35;
+  form1.Pibut.enabled:=false;
+  form1.modbut.enabled:=false;
+  form1.divbut.enabled:=false;
+  form1.factorial.enabled:=false;
+  form1.Degree.enabled:=false;
+  form1.Degree1.enabled:=false;
+  form1.logbut.enabled:=false;
+  form1.lnbut.enabled:=false;
+  form1.sinbut.enabled:=false;
+  form1.cosbut.enabled:=false;
+  form1.tgbut.enabled:=false;
+  form1.ctgbut.enabled:=false;
   Form1.ChangeOfSignOfTheDegree.enabled:=false;
   Form1.ChangeOfSign.enabled:=false;
   Form1.MinusSign.enabled:=false;
@@ -298,6 +310,18 @@ j:integer;
 begin
 if f=True then begin    //  Отключение блокировки кнопок
   Form1.ChangeOfSignOfTheDegree.enabled:=True;
+  form1.Pibut.enabled:=true;
+  form1.modbut.enabled:=true;
+  form1.divbut.enabled:=true;
+  form1.factorial.enabled:=true;
+  form1.Degree.enabled:=true;
+  form1.Degree1.enabled:=true;
+  form1.logbut.enabled:=true;
+  form1.lnbut.enabled:=true;
+  form1.sinbut.enabled:=true;
+  form1.cosbut.enabled:=true;
+  form1.tgbut.enabled:=true;
+  form1.ctgbut.enabled:=true;
   Form1.ChangeOfSign.enabled:=True;
   Form1.MinusSign.enabled:=True;
   Form1.MultiplicationSign.enabled:=True;
@@ -399,6 +423,7 @@ begin
   end;
   F3:=true;
   InputRestriction;
+  edit1.SetFocus;
 end;
 
 procedure TForm1.SquareClick(Sender: TObject); //Возведение в квадрат
@@ -525,7 +550,7 @@ procedure TForm1.signs(Sender: TObject); // Действия
         'log':znaki[i]:='l';
         'mod':znaki[i]:='m';
         'div':znaki[i]:='d';
-        'ª√x':znaki[i]:='v';
+        'ª√x':begin if chisla[i]<0 then lock else znaki[i]:='v'; end;
         'xª':znaki[i]:='^';
         '+':znaki[i]:='+';
         '−':znaki[i]:='-';
@@ -664,6 +689,8 @@ procedure TForm1.FactorialClick(Sender: TObject); // Факториал
   end
   else
       lock;
+  f3:=true;
+  edit1.SetFocus;
 end;
 
 procedure TForm1.FormCreate(Sender: TObject);
@@ -692,6 +719,7 @@ begin
      edit1.text:=floattostr(ln(e));
      f3:=true;
      InputRestriction;
+     edit1.SetFocus;
 end;
 
 procedure TForm1.MClick(Sender: TObject); //Память
@@ -720,6 +748,7 @@ begin
   form1.Width:=329;
   Normal.enabled:=false;
   Engineering.enabled:=True;
+  edit1.SetFocus;
 end;
 
 procedure TForm1.EngineeringClick(Sender: TObject); //Инженерный вид калькулятора
@@ -727,6 +756,7 @@ begin
     form1.width:=460;
     Engineering.enabled:=false;
     Normal.enabled:=True;
+    edit1.SetFocus;
 end;
 
 procedure TForm1.PercentClick(Sender: TObject);  //Процент
@@ -761,6 +791,7 @@ begin
   edit1.text:=floattostr(e);
   F3:=true;
   InputRestriction;
+  edit1.SetFocus;
 end;
 
 end.

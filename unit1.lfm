@@ -1,7 +1,7 @@
 object Form1: TForm1
-  Left = 431
+  Left = 548
   Height = 486
-  Top = 52
+  Top = 22
   Width = 329
   BorderStyle = bsToolWindow
   Caption = 'Калькулятор'
