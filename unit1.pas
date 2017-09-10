@@ -196,6 +196,10 @@ end;
 procedure changesign; // Смена вида знака
   begin
         case znaki[i] of
+             'l':form1.gg.text:=form1.gg.text+'l';
+             'm':form1.gg.text:=form1.gg.text+'m';
+             'd':form1.gg.text:=form1.gg.text+'d';
+             'v':form1.gg.text:=form1.gg.text+'v';
              '^':form1.gg.text:=form1.gg.text+'^';
              '+':form1.gg.text:=form1.gg.text+'+';
              '-':form1.gg.text:=form1.gg.text+'−';
