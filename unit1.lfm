@@ -130,7 +130,10 @@ object Form1: TForm1
     00000000000000000000
   }
   Menu = MainMenu
+  OnActivate = FormActivate
   OnCreate = FormCreate
+  OnDeactivate = FormActivate
+  OnShow = FormActivate
   LCLVersion = '1.6.4.0'
   object Edit1: TEdit
     Cursor = crArrow
@@ -802,12 +805,28 @@ object Form1: TForm1
         OnClick = EngineeringClick
       end
     end
+    object Editbf: TMenuItem
+      Caption = 'Правка'
+      object Copybuf: TMenuItem
+        Caption = 'Копировать'
+        ShortCut = 16451
+        OnClick = CopyandPastebufClick
+      end
+      object Pastebuf: TMenuItem
+        Caption = 'Вставить'
+        ShortCut = 16470
+        OnClick = CopyandPastebufClick
+      end
+    end
     object Help: TMenuItem
       Caption = 'Справка'
       OnClick = HelpClick
       object Creator: TMenuItem
         Caption = 'Создатель'
         OnClick = CreatorClick
+      end
+      object Help1: TMenuItem
+        Caption = 'Справка'
       end
     end
   end

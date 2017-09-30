@@ -36,9 +36,15 @@ implementation
 
 
 procedure TForm2.FormCloseQuery(Sender: TObject; var CanClose: boolean);
+var z:integer;
 begin
-  Canclose:=Messagedlg('Вы, действительно, хотите закрыть эти ЧУДЕСНЫЕ картинки?',mtConfirmation, [mbyes,mbno],0)=mrYes
+  z:=Messagedlg('Вы, действительно, хотите закрыть эти ЧУДЕСНЫЕ картинки?',mtConfirmation, [mbyes,mbno],0);
+  case z of
+  mryes:Form2.Hide;
+  mrno:exit;
+  end;
 end;
+
 
 end.
 

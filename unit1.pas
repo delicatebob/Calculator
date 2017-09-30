@@ -6,7 +6,7 @@ interface
 
 uses
 Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs,
-StdCtrls, LCLType, ExtCtrls, Buttons, ComCtrls, DbCtrls, Menus, Windows, Math, Unit2;
+StdCtrls, LCLType, ExtCtrls, Buttons, ComCtrls, DbCtrls, Menus, Windows, Math, Unit2, Clipbrd;
 
 type
 
@@ -18,6 +18,10 @@ type
     Degree1: TButton;
     divbut: TButton;
     lnbut: TButton;
+    Help1: TMenuItem;
+    Editbf: TMenuItem;
+    Copybuf: TMenuItem;
+    Pastebuf: TMenuItem;
     Pibut: TButton;
     Factorial: TButton;
     Degree: TButton;
@@ -62,11 +66,14 @@ type
     But6: TButton;
     But3: TButton;
     Edit1: TEdit;
+    Clipboard:Tclipboard;
+    procedure CopyandPastebufClick(Sender: TObject); //  Копировать и вставить
     procedure CreatorClick(Sender: TObject);
     procedure dellastsignClick(Sender: TObject); // Удаление последнего символа
     //Убирание каретки Begin
     procedure Edit1Click1(Sender: TObject);
     procedure edit1keyup(Sender: TObject; var Key: Word; Shift: TShiftState);
+    procedure FormActivate(Sender: TObject);
     //end
     procedure CeClick(Sender: TObject);   // Отчистка неполная
     procedure ChangeOfSignClick(Sender: TObject); // Смена знака числа
@@ -107,13 +114,12 @@ var
   znaki:array[1..255] of char; // Массив со всеми знаками
   i,i1:integer; // Кол-во чисел и знаков
   t:real; // Для смены знака у степени числа
-  z{Для запятой}
-  ,f {Для блокировки кнопок}
+  f {Для блокировки кнопок}
   ,f1 {Чтобы число оставалось на экране до момента набора следующего}
   ,f2 {Для возвращения целого числа при обратной смене знака у степени числа}
   ,f3 {Чтобы число удалялось после выполнения действий, если с ним больше ничего не делают}
-  ,f4,f5{Для смены знака во 2-м edit'e,если число не менялось}
-  ,f6{Для вывода 0 во 2-й edit}
+  ,f4,f5{Для смены знака во 2-м Editbf'e,если число не менялось}
+  ,f6{Для вывода 0 во 2-й Editbf}
   ,f7{Деление на 0}
   ,f8{Для повторения последнего действия}
   ,f9{Для переполнения}:boolean; //Флажки
@@ -130,6 +136,12 @@ begin
   HideCaret(Edit1.Handle);
   edit1.SelLength:=0;
 end;
+procedure TForm1.FormActivate(Sender: TObject);
+begin
+ HideCaret(Edit1.Handle);
+  edit1.SelLength:=0;
+  edit1.setfocus;
+end;
 procedure TForm1.Edit1Click1(Sender: TObject);
 begin
   HideCaret(Edit1.Handle);
@@ -143,9 +155,7 @@ var
 begin
   if f=false then begin
   e:=edit1.text;
-     if e[length(e)]=',' then
-        z:=false;
-     if length(e)=1 then
+     if (length(e)=1) or (length(e)=2) and (e[1]='-') then
         edit1.text:='0'
      else begin
           delete(e,length(e),1);
@@ -161,6 +171,24 @@ begin
   form1.creator.enabled:=false;
 end;
 
+procedure TForm1.CopyandPastebufClick(Sender: TObject);   //Копировать и вставить
+var s:string;
+begin
+  s:=edit1.text;
+ case (sender as Tbutton).caption of
+   'Копировать':edit1.PasteFromClipboard;
+   'Вставить':edit1.CopyToclipboard;
+ end;
+ Try
+ edit1.text:=floattostr(strtofloat(edit1.text)+1-1);
+ except
+ edit1.text:=s;
+ end;
+ f2:=false;
+  f3:=true;
+  edit1.SetFocus;
+end;
+
 procedure InputRestriction; // Ограничение ввода в edit1
 var p1:integer;
   p2:real;
@@ -170,13 +198,13 @@ Begin
   case length(s) of
        0..12:form1.edit1.font.Size:=39;
        13:form1.edit1.font.Size:=37;
-       14:form1.edit1.font.Size:=34;
-       15:form1.edit1.font.Size:=31;
-       16:form1.edit1.font.Size:=29;
-       17:form1.edit1.font.Size:=28;
-       18:form1.edit1.font.Size:=26;
-       19:form1.edit1.font.Size:=25;
-       20:form1.edit1.font.Size:=24;
+       14:form1.edit1.font.Size:=33;
+       15:form1.edit1.font.Size:=30;
+       16:form1.edit1.font.Size:=28;
+       17:form1.edit1.font.Size:=27;
+       18:form1.edit1.font.Size:=25;
+       19:form1.edit1.font.Size:=24;
+       20:form1.edit1.font.Size:=23;
   end;
   for p1:=1 to length(s) do begin
           if s[p1]='1' then
@@ -208,7 +236,7 @@ procedure changesign; // Смена вида знака
         end;
   end;
 
-procedure Myp; //Заполнение 2-го edit'а
+procedure Myp; //Заполнение 2-го Editbf'а
 var
 e,e2:string;
 begin
@@ -236,31 +264,39 @@ begin
      end;
   end;
 
-procedure Tform1.Edit1KeyPress(Sender: TObject; var Key: char);
+procedure Tform1.Edit1KeyPress(Sender: TObject; var Key: char);  // Блокировка всех символов, невходящих в состав необходимых
+var
+but:Tbutton;
 begin
- if  (key in ['0'..'9','*','/','-','+',',','=',#8,#13,'%']) then begin // Блокировка всех символов, невходящих в состав необходимых
- case key of
-  '0':begin but0.enabled:=false; sleep(50); but0.enabled:=true;   but0.click; key:=#0; end;
-  '1':begin but1.enabled:=false; sleep(50); but1.enabled:=true; but1.click; key:=#0; end;
-  '2':begin but2.enabled:=false; sleep(50); but2.enabled:=true; but2.click; key:=#0; end;
-  '3':begin but3.enabled:=false; sleep(50); but3.enabled:=true; but3.click; key:=#0; end;
-  '4':begin but4.enabled:=false; sleep(50); but4.enabled:=true; but4.click; key:=#0; end;
-  '5':begin but5.enabled:=false; sleep(50); but5.enabled:=true; but5.click; key:=#0; end;
-  '6':begin but6.enabled:=false; sleep(50); but6.enabled:=true; but6.click; key:=#0; end;
-  '7':begin but7.enabled:=false; sleep(50); but7.enabled:=true; but7.click; key:=#0; end;
-  '8':begin but8.enabled:=false; sleep(50); but8.enabled:=true; but8.click; key:=#0; end;
-  '9':begin but9.enabled:=false; sleep(50); but9.enabled:=true; but9.click; key:=#0; end;
-  '+':begin plus.enabled:=false; sleep(50); plus.enabled:=true; plus.click; key:=#0; end;
-  '-':begin MinusSign.enabled:=false; sleep(50); MinusSign.enabled:=true; MinusSign.click; key:=#0; end;
-  '*':begin MultiplicationSign.enabled:=false; sleep(50); MultiplicationSign.enabled:=true; MultiplicationSign.click; key:=#0; end;
-  '/':begin divisionSign.enabled:=false; sleep(50); divisionSign.enabled:=true; divisionSign.click; key:=#0; end;
-  ',':begin comma.enabled:=false; sleep(50); comma.enabled:=true;  comma.click; key:=#0; end;
-  '=',#13:begin EqualSign.enabled:=false; sleep(50); EqualSign.enabled:=true;  EqualSign.click; key:=#0; end;
-  #8:begin dellastsign.Enabled:=false; sleep(50); dellastsign.enabled:=true; dellastsign.click; key:=#0;  end;
-  '%':begin percent.enabled:=false; sleep(50); percent.enabled:=true; percent.click; key:=#0; end;
- end;
- end
-  else
+  case key of
+       '0':but:=but0;
+       '1':but:=but1;
+       '2':but:=but2;
+       '3':but:=but3;
+       '4':but:=but4;
+       '5':but:=but5;
+       '6':but:=but6;
+       '7':but:=but7;
+       '8':but:=but8;
+       '9':but:=but9;
+       '=',#13:but:=EqualSign;
+       ',':but:=Comma;
+  end;
+  if (edit1.text<>'Ошибка!') and (edit1.text<>'Переполнение!') then
+     if  (key in ['0'..'9','*','/','-','+',',','=',#8,#13,'%']) then begin
+         case key of
+           '+':but:=plus;
+           '-':but:=MinusSign;
+           '*':but:=MultiplicationSign;
+           '/':but:=divisionSign;
+           #8:but:=dellastsign;
+           '%':but:=percent;
+         end;
+      end;
+  but.enabled:=false;
+  sleep(50);
+  but.enabled:=true;
+  but.click;
   key:=#0;
   edit1.SetFocus;
  end;
@@ -302,6 +338,7 @@ begin    //  Блокировка кнопок
   form1.MS.enabled:=false;
   form1.MC.enabled:=false;
   f:=true;
+  f2:=false;
   f8:=false;
   chisla[255]:=0;
   chisla[254]:=0;
@@ -349,7 +386,6 @@ if f=True then begin    //  Отключение блокировки кнопо
       znaki[i]:=' ';
   end;
   i:=0;
-  z:=false;
 end;
  if buffer1='' then begin
  Form1.MC.enabled:=false;
@@ -357,7 +393,7 @@ end;
  end;
 end;
 
-procedure edit; // Чтобы число оставалось на экране до момента набора следующего
+procedure Edit; // Чтобы число оставалось на экране до момента набора следующего
 begin
 if f1=true then begin
    Form1.edit1.clear;
@@ -374,7 +410,7 @@ end;
 procedure TForm1.WOW(Sender: TObject); //Цифры
 begin
     Unlock;
-    edit;
+    Edit;
     edit2;
     if (edit1.text='0') then
        edit1.clear;
@@ -397,7 +433,6 @@ unlock;
        znaki[i] := #0;
    end;
    i := 0;
-   z := false;
    Edit1.text := '0';
    f2 := false;
    f3:=false;
@@ -425,6 +460,7 @@ begin
   'tg':begin if (frac(e/90)=0) and (frac(e/180)<>0) then lock else edit1.text:=floattostr(sin(e*pi/180)/cos(e*pi/180)); end;
   'ctg':begin if frac(e/180)=0 then lock else edit1.text:=floattostr(cos(e*pi/180)/sin(e*pi/180)); end;
   end;
+  f2:=false;
   F3:=true;
   InputRestriction;
   edit1.SetFocus;
@@ -433,10 +469,15 @@ end;
 procedure TForm1.SquareClick(Sender: TObject); //Возведение в квадрат
 var e:double;
 begin
+  Try
   e:=StrToFloat(edit1.text);
   e:=e*e;
   edit1.MaxLength:=20;
   Edit1.text:=floattostr(e);
+  except
+  f9:=true;
+  lock;
+  end;
   f2:=false;
   f3:=true;
   edit1.SetFocus;
@@ -455,8 +496,6 @@ begin
   else begin
   lock;
   end;
-  if frac(e)=0 then
-  z:=false;
   f2:=false;
   f3:=true;
   edit1.SetFocus;
@@ -465,7 +504,6 @@ end;
 
 procedure TForm1.CeClick(Sender: TObject); // Отчистка неполная
   begin
-      z:=false;
       Edit1.text:='0';
       f2:=false;
       edit1.SetFocus;
@@ -476,10 +514,10 @@ procedure TForm1.ChangeOfSignClick(Sender: TObject); // Смена знака ч
   var
     e:double;
   begin
-  e:=StrToFloat(edit1.text);
-  e*=-1;
-  edit1.maxlength:=16;
-  Edit1.text:=floattostr(e);
+   e:=StrToFloat(edit1.text);
+   e*=-1;
+   edit1.maxlength:=16;
+   Edit1.text:=floattostr(e);
    f2:=false;
    f3:=false;
    edit1.SetFocus;
@@ -492,7 +530,7 @@ e:double;
 begin
  if f2=false then
     edit0[1]:=strtofloat(edit1.text);
- if (edit1.text<>'0') then begin
+ if (edit1.text<>'0') and (edit1.text<>'0,') then begin
     if f2=false then
     edit0[2]:=1/edit0[1];
     edit1.maxlength:=18;
@@ -507,12 +545,10 @@ begin
  end;
 f2:=true;
 e:=strtofloat(edit1.text);
-if frac(e) = 0 then  // Проверка запятой
-   z:=false;
 f3:=true;
 edit1.SetFocus; // Фокус на edit1
 InputRestriction;  // Настройка Edit1'a
- if edit1.text='0' then begin
+ if (edit1.text='0') or (edit1.text='0,') then begin
     lock;
     f2:=false;
    end;
@@ -520,29 +556,30 @@ end;
 
 
 procedure TForm1.CommaClick(Sender: TObject);  // Запятая
+var e:string;
+e1:double;
 begin
   unlock;
-  edit;
+  Edit;
   edit2;
-  if (z=false) then
-     if (edit1.text<>'') then begin
-        z:=True;
-        edit1.maxlength:=16;
-        Edit1.text:=edit1.Text+',';
-     end
-     else begin
-        edit1.text:='0,';
-        z:=true;
-     end;
-     InputRestriction;
-     f3:=false;
-     edit1.SetFocus;
+   if (edit1.text='') then
+        edit1.text:='0,'
+   else begin
+        e:=edit1.text;
+        e1:=strtofloat(edit1.text);
+        if (frac(e1) = 0) and (e[length(e)]<>',') then begin  // Проверка запятой
+           edit1.maxlength:=16;
+           Edit1.text:=edit1.Text+',';
+        end;
+   end;
+  InputRestriction;
+  f3:=false;
+  edit1.SetFocus;
 end;
 
 
 procedure TForm1.signs(Sender: TObject); // Действия
   begin
-   z:=False;
    if f5=true then
    f4:=false;
    if f4=true then begin
@@ -589,6 +626,7 @@ otvet:=0;
 edit1.SetFocus;
 gg.clear;
 unlock;
+try
 if ((znaki[i] = '/') or (znaki[i] = 'm') or (znaki[i] = 'd')) and (edit1.text ='0') then begin
          f7:=true;
          lock;
@@ -648,10 +686,6 @@ if edit1.text='' then
            edit1.text:=floattostr(otvet);
     g:=0;
     i:=0;
-    z:=false;
-    f1:=false;
-    f2:=false;
-    f3:=true;
  end
  else
      if (f8=true)  then begin
@@ -664,6 +698,13 @@ if edit1.text='' then
         end;
      end;
  end;
+except
+f9:=true;
+lock;
+end;
+f1:=false;
+f2:=false;
+f3:=true;
 f4:=true;
 f5:=false;
 f7:=false;
@@ -675,30 +716,33 @@ procedure TForm1.FactorialClick(Sender: TObject); // Факториал
   e,g:real;
   i:integer;
   begin
-  if z=false then begin
+  g:=strtofloat(edit1.text);
+  if frac(g)=0 then begin
     e:=strtofloat(edit1.text);
     g:=1;
-    if e<100 then begin
+    try
     if e<>0 then
        for i:=1 to trunc(e) do
            g:=g*i;
     edit1.maxlength:=20;
     edit1.text:=floattostr(g);
     InputRestriction;
-    end
-    else begin
+    except
          f9:=true;
          lock;
     end;
   end
   else
       lock;
+  f2:=false;
   f3:=true;
   edit1.SetFocus;
 end;
 
-procedure TForm1.FormCreate(Sender: TObject);
+procedure TForm1.FormCreate(Sender: TObject); // При запуске формы
   begin
+  Clipboard:=Tclipboard.Create;
+  HideCaret(Edit1.Handle);
   f4:=true;
 end;
 
@@ -721,6 +765,7 @@ begin
      e:=strtofloat(edit1.text);
      edit1.maxlength:=20;
      edit1.text:=floattostr(ln(e));
+     f2:=false;
      f3:=true;
      InputRestriction;
      edit1.SetFocus;
@@ -733,7 +778,7 @@ begin
       'M-':begin buffer:=buffer-strtofloat(edit1.text); buffer1:=floattostr(buffer); end;
       'MS':begin buffer:=strtofloat(edit1.text); buffer1:=floattostr(buffer); end;
       'MC':begin buffer:=0; buffer1:=''; end;
-      'MR':edit1.text:=buffer1;
+      'MR':begin edit1.text:=buffer1; f2:=false; end;
  end;
  if (buffer1<>'') then begin
     MR.enabled:=true;
@@ -779,8 +824,6 @@ begin
        temp:=temp/100;
        edit1.text:=floattostr(temp);
   end;
-  if frac(temp) = 0 then  // Проверка запятой
-     z:=false;
   f2:=false;
   f3:=true;
   edit1.SetFocus; // Фокус на edit1
@@ -793,6 +836,7 @@ begin
   e:=pi;
   edit1.maxlength:=20;
   edit1.text:=floattostr(e);
+  f2:=false;
   F3:=true;
   InputRestriction;
   edit1.SetFocus;
