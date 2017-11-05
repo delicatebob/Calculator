@@ -66,10 +66,10 @@ type
     But6: TButton;
     But3: TButton;
     Edit1: TEdit;
-    Clipboard:Tclipboard;
     procedure CopyandPastebufClick(Sender: TObject); //  Копировать и вставить
     procedure CreatorClick(Sender: TObject);
     procedure dellastsignClick(Sender: TObject); // Удаление последнего символа
+    procedure InputRestriction(Sender: TObject);
     //Убирание каретки Begin
     procedure Edit1Click1(Sender: TObject);
     procedure edit1keyup(Sender: TObject; var Key: Word; Shift: TShiftState);
@@ -105,12 +105,13 @@ type
 
 var
   Form1: TForm1;
+  Clipboard:Tclipboard;
   //Память
   buffer1:string;
-  buffer:double;
+  buffer:Extended;
   //end
-  edit0:array[1..2] of double; // Для смены знака у степени числа
-  chisla:array[1..255] of double; // Массив со всеми числами
+  edit0:array[1..2] of Extended; // Для смены знака у степени числа
+  chisla:array[1..255] of Extended; // Массив со всеми числами
   znaki:array[1..255] of char; // Массив со всеми знаками
   i,i1:integer; // Кол-во чисел и знаков
   t:real; // Для смены знака у степени числа
@@ -176,25 +177,28 @@ var s:string;
 begin
   s:=edit1.text;
  case (sender as Tbutton).caption of
-   'Копировать':edit1.PasteFromClipboard;
-   'Вставить':edit1.CopyToclipboard;
- end;
- Try
- edit1.text:=floattostr(strtofloat(edit1.text)+1-1);
- except
- edit1.text:=s;
+   'Копировать':Clipboard.Astext:=edit1.text;
+   'Вставить':begin
+     try
+     edit1.CopyToclipboard;
+     edit1.text:=floattostr(strtofloat(edit1.text)+1-1);
+     except
+     edit1.text:=s;
+     end;
+   end;
  end;
  f2:=false;
   f3:=true;
   edit1.SetFocus;
 end;
 
-procedure InputRestriction; // Ограничение ввода в edit1
+procedure Tform1.InputRestriction(Sender: TObject); // Ограничение ввода в edit1
 var p1:integer;
   p2:real;
   s:string;
 Begin
   s:=form1.edit1.text;
+  if form1.edit1.width<>468 then begin
   case length(s) of
        0..12:form1.edit1.font.Size:=39;
        13:form1.edit1.font.Size:=37;
@@ -214,12 +218,31 @@ Begin
           if p2>6 then
              p2:=p2+0.5;
   end;
+  form1.edit1.maxlength:=15;
   if (length(s) in [13..20]) and (p2>0) then begin
   form1.edit1.font.Size:=form1.edit1.font.Size+round(p2);
   p2:=0;
   end;
-  form1.edit1.maxlength:=15;
-end;
+  end
+  else begin
+  form1.edit1.maxlength:=20;
+  for p1:=1 to length(s) do begin
+          if s[p1]='1' then
+             p2:=p2+0.5;
+          if p2=3 then
+             p2:=p2+0.5;
+          if p2>6 then
+             p2:=p2+0.5;
+  end;
+    case length(s) of
+       0..16:form1.edit1.font.Size:=39;
+       17:form1.edit1.font.Size:=38;
+       18:form1.edit1.font.Size:=36;
+       19:form1.edit1.font.Size:=34;
+       20:form1.edit1.font.Size:=32;
+  end;
+  end;
+  end;
 
 procedure changesign; // Смена вида знака
   begin
@@ -415,7 +438,6 @@ begin
     if (edit1.text='0') then
        edit1.clear;
     Edit1.text:=Edit1.text+(sender as Tbutton).caption;
-    InputRestriction;
     f2 := false;
     f3 := false;
     edit1.SetFocus;
@@ -441,7 +463,6 @@ unlock;
    f6:=false;
    edit1.SetFocus;
    gg.clear;
-   InputRestriction;
    f8:=false;
    chisla[255]:=0;
    chisla[254]:=0;
@@ -462,7 +483,6 @@ begin
   end;
   f2:=false;
   F3:=true;
-  InputRestriction;
   edit1.SetFocus;
 end;
 
@@ -481,7 +501,6 @@ begin
   f2:=false;
   f3:=true;
   edit1.SetFocus;
-  InputRestriction;
 end;
 
 procedure TForm1.SquareRootClick(Sender: TObject); // Корень квадратный
@@ -499,7 +518,6 @@ begin
   f2:=false;
   f3:=true;
   edit1.SetFocus;
-  InputRestriction;
 end;
 
 procedure TForm1.CeClick(Sender: TObject); // Отчистка неполная
@@ -507,7 +525,6 @@ procedure TForm1.CeClick(Sender: TObject); // Отчистка неполная
       Edit1.text:='0';
       f2:=false;
       edit1.SetFocus;
-      InputRestriction;
   end;
 
 procedure TForm1.ChangeOfSignClick(Sender: TObject); // Смена знака числа
@@ -521,7 +538,6 @@ procedure TForm1.ChangeOfSignClick(Sender: TObject); // Смена знака ч
    f2:=false;
    f3:=false;
    edit1.SetFocus;
-   InputRestriction;
 end;
 
 procedure TForm1.ChangeOfSignOfTheDegreeClick(Sender: TObject);  //Смена знака степени у числа
@@ -547,7 +563,6 @@ f2:=true;
 e:=strtofloat(edit1.text);
 f3:=true;
 edit1.SetFocus; // Фокус на edit1
-InputRestriction;  // Настройка Edit1'a
  if (edit1.text='0') or (edit1.text='0,') then begin
     lock;
     f2:=false;
@@ -572,7 +587,6 @@ begin
            Edit1.text:=edit1.Text+',';
         end;
    end;
-  InputRestriction;
   f3:=false;
   edit1.SetFocus;
 end;
@@ -708,7 +722,6 @@ f3:=true;
 f4:=true;
 f5:=false;
 f7:=false;
-InputRestriction;
 end;
 
 procedure TForm1.FactorialClick(Sender: TObject); // Факториал
@@ -726,7 +739,6 @@ procedure TForm1.FactorialClick(Sender: TObject); // Факториал
            g:=g*i;
     edit1.maxlength:=20;
     edit1.text:=floattostr(g);
-    InputRestriction;
     except
          f9:=true;
          lock;
@@ -767,7 +779,6 @@ begin
      edit1.text:=floattostr(ln(e));
      f2:=false;
      f3:=true;
-     InputRestriction;
      edit1.SetFocus;
 end;
 
@@ -794,6 +805,8 @@ end;
 
 procedure TForm1.NormalClick(Sender: TObject);   //Обычный вид калькулятора
 begin
+  GG.width:=334;
+  edit1.width:=337;
   form1.Width:=329;
   Normal.enabled:=false;
   Engineering.enabled:=True;
@@ -802,6 +815,8 @@ end;
 
 procedure TForm1.EngineeringClick(Sender: TObject); //Инженерный вид калькулятора
 begin
+    gg.width:=465;
+    edit1.width:=468;
     form1.width:=460;
     Engineering.enabled:=false;
     Normal.enabled:=True;
@@ -827,7 +842,6 @@ begin
   f2:=false;
   f3:=true;
   edit1.SetFocus; // Фокус на edit1
-  InputRestriction;  // Настройка Edit1'a
 end;
 
 procedure TForm1.PibutClick(Sender: TObject);  //Число Пи
@@ -838,7 +852,6 @@ begin
   edit1.text:=floattostr(e);
   f2:=false;
   F3:=true;
-  InputRestriction;
   edit1.SetFocus;
 end;
 
